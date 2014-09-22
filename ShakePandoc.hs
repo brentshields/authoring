@@ -5,8 +5,9 @@ import Development.Shake.FilePath
 
 -- We use different flags based on the file extension of the markdown input
 mdToHtmlFlags :: FilePath -> String
-mdToHtmlFlags fp | takeExtension fp == ".lhs" = "-f markdown+lhs -t html5"
-                 | otherwise = "-f markdown -t html5"
+mdToHtmlFlags fp | takeExtension fp == ".lhs" = "-f markdown+lhs" ++ outFlags
+                 | otherwise = "-f markdown" ++ outFlags
+  where outFlags = " -t html5 --mathjax"
 
 mdToInlineHtml :: FilePath -> Action ()
 mdToInlineHtml = buildHtmlFromMd []
