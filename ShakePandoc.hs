@@ -3,8 +3,10 @@ module ShakePandoc where
 import Development.Shake
 import Development.Shake.FilePath
 
-mdToHtmlFlags :: String
-mdToHtmlFlags = "-f markdown -t html5"
+-- We use different flags based on the file extension of the markdown input
+mdToHtmlFlags :: FilePath -> String
+mdToHtmlFlags fp | takeExtension fp == ".lhs" = "-f markdown+lhs -t html5"
+                 | otherwise = "-f markdown -t html5"
 
 mdToInlineHtml :: FilePath -> Action ()
 mdToInlineHtml = buildHtmlFromMd []
@@ -14,6 +16,9 @@ mdToHtmlDoc = buildHtmlFromMd ["-s"]
 
 buildHtmlFromMd :: [String] -> FilePath -> Action ()
 buildHtmlFromMd flags = \out -> do
-  let md = out -<.> "md"
-  need [md]
-  cmd "pandoc" [md] mdToHtmlFlags flags "-o" [out]
+  let md  = out -<.> "md"
+      lhs = out -<.> "lhs"
+  -- prefer markdown, but if it doesn't exist check for literate haskell
+  input <- fmap (\hasMd -> if hasMd then md else lhs) $ doesFileExist md
+  need [input]
+  cmd "pandoc" [input] (mdToHtmlFlags input) flags "-o" [out]
