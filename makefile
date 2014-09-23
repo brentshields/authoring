@@ -5,7 +5,10 @@ gen-build:
 	ghc --make AutoReloadHtml.hs -rtsopts -with-rtsopts=-I0 -outputdir=bin -o bin/build
 
 run-build:
-	bin/build all
+	bin/build
+
+auto:
+	gulp watch
 
 clean:
 	bin/build clean
