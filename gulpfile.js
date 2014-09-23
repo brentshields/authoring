@@ -1,13 +1,16 @@
 var gulp  = require('gulp')
-var exec = require('child_process').exec
+    exec = require('child_process').exec
+    livereload = require('gulp-livereload');
 
-gulp.task('make', function() {
+function update() {
     exec('make', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
+        livereload.changed();
     });
-})
+}
 
 gulp.task('watch', function () {
-    gulp.watch(['docs/*'], ['make'])
+    livereload.listen();
+    gulp.watch(['docs/*']).on('change', update);
 })
