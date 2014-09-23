@@ -12,8 +12,9 @@ mdToHtmlFlags fp | takeExtension fp == ".lhs" = "-f markdown+lhs" ++ outFlags
 allMdFilesBelow :: FilePath -> Action [FilePath]
 allMdFilesBelow = flip getDirectoryFiles ["//*.md", "//*.lhs"]
 
-genHtmlExt :: String
-genHtmlExt = ".genhtml"
+allHtmlTargetsBelow :: FilePath -> Action [FilePath]
+allHtmlTargetsBelow =
+  fmap (map $ flip replaceExtension ".html") . allMdFilesBelow
 
 mdToInlineHtml :: FilePath -> Action ()
 mdToInlineHtml = buildHtmlFromMd []

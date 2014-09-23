@@ -2,16 +2,16 @@ all: gen-build run-build
 
 gen-build:
 	mkdir -p bin
-	ghc --make AutoReloadHtml.hs -rtsopts -with-rtsopts=-I0 -outputdir=bin -o bin/build
+	ghc --make ExampleBuild.hs -rtsopts -with-rtsopts=-I0 -outputdir=bin -o bin/build
 
 run-build:
-	bin/build
+	cd docs && ../bin/build
 
 auto:
 	gulp watch
 
 clean:
-	bin/build clean
+	cd docs && ../bin/build clean
 	rm -rf bin
 
 .PHONY: clean
