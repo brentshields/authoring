@@ -1,12 +1,14 @@
-all: auto-reload-html
+all: gen-build run-build
 
-auto-reload-html:
-	mkdir -p build
+gen-build:
 	mkdir -p bin
-	ghc --make AutoReloadHtml.hs -rtsopts -with-rtsopts=-I0 -outputdir=build -o bin/auto-reload-html
+	ghc --make AutoReloadHtml.hs -rtsopts -with-rtsopts=-I0 -outputdir=bin -o bin/build
+
+run-build:
+	bin/build all
 
 clean:
-	rm -rf build
+	bin/build clean
 	rm -rf bin
 
 .PHONY: clean

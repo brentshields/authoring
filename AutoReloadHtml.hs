@@ -3,23 +3,16 @@ import Development.Shake.FilePath
 import ShakePandoc
 
 opts :: ShakeOptions
-opts = shakeOptions {shakeVerbosity=Quiet}
-
-autoReloadScriptFile :: FilePath
-autoReloadScriptFile = shakeFiles opts </> "auto-reload.html"
-
-autoReloadScript :: String
-autoReloadScript =
-  "<script>window.onload=function(){" ++
-  "setTimeout(function(){location.reload()},1000)}</script>"
+opts = shakeOptions
 
 main :: IO ()
 main = shakeArgs opts $ do
-  phony "clean" $ removeFilesAfter (shakeFiles opts) ["//*"]
+  want ["all"]
   
-  autoReloadScriptFile *> \out -> do
-    command_ [Shell] "echo" [show autoReloadScript, ">", out]
-    
-  "*.html" *> \out -> do
-    need [autoReloadScriptFile]
-    buildHtmlFromMd ["-B", autoReloadScriptFile] out
+  phony "clean" $ removeFilesAfter "." ["//*" ++ genHtmlExt]
+
+  phony "all" $ do
+    outs <- fmap (map $ flip replaceExtension genHtmlExt) $ allMdFilesBelow "."
+    need outs
+
+  "//*" ++ genHtmlExt *> mdToHtmlDoc

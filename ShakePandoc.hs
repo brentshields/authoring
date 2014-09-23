@@ -9,6 +9,12 @@ mdToHtmlFlags fp | takeExtension fp == ".lhs" = "-f markdown+lhs" ++ outFlags
                  | otherwise = "-f markdown" ++ outFlags
   where outFlags = " -t html5 --mathjax"
 
+allMdFilesBelow :: FilePath -> Action [FilePath]
+allMdFilesBelow = flip getDirectoryFiles ["//*.md", "//*.lhs"]
+
+genHtmlExt :: String
+genHtmlExt = ".genhtml"
+
 mdToInlineHtml :: FilePath -> Action ()
 mdToInlineHtml = buildHtmlFromMd []
 
